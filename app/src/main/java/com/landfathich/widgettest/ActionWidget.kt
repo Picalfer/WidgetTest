@@ -1,8 +1,11 @@
 package com.landfathich.widgettest
 
+import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.widget.RemoteViews
 
 /**
@@ -34,11 +37,15 @@ internal fun updateAppWidget(
     appWidgetManager: AppWidgetManager,
     appWidgetId: Int,
 ) {
-    val widgetText = context.getString(R.string.appwidget_text)
-    // Construct the RemoteViews object
-    val views = RemoteViews(context.packageName, R.layout.action_widget)
-    views.setTextViewText(R.id.appwidget_text, widgetText)
+    val remoteViews = RemoteViews(context.packageName, R.layout.action_widget)
+    val intent = Intent(Intent.ACTION_VIEW)
+    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    intent.data = Uri.parse("https://www.youtube.com/watch?v=Lw059rqTXho&ab_channel=SolutionCodeAndroid")
 
-    // Instruct the widget manager to update the widget
-    appWidgetManager.updateAppWidget(appWidgetId, views)
+    val pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+    remoteViews.setOnClickPendingIntent(
+        R.id.open_btn, pendingIntent
+    )
+
+    appWidgetManager.updateAppWidget(appWidgetId, remoteViews)
 }
